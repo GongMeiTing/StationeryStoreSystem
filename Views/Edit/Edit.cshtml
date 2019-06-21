@@ -1,0 +1,201 @@
+﻿@model IList<StationeryStoreSystem.Models.Order>
+@{
+    ViewBag.Title = "Edit";
+}
+<style>
+    .smallerCell {
+        width: 240px;
+    
+    }
+    </style>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+@*<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>*@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
+<h3>Edit Order</h3>
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "myForm" }))
+{
+  <div class="container">
+        <div class="row mb-3">
+            <div class="col-2 text-right"><i class='fas fa-search' style="font-size:24px"></i></div>
+            <div class="col-4 text-left">
+                <input type="text" id="myInput" onkeyup="Fliter()" placeholder="Search for OrderID.." title="Type in a name" class="form-control">
+            </div>
+            <div clss="col-6"></div>
+        </div>
+
+      <div class="row">
+          <div class="col-lg-12">
+              <table class="table table-hover"  id="dataTable">
+                  <thead class="thead-dark">
+                      <tr>
+                          <th scope="col" style="width:20px" ></th>
+                          <th scope="col" style="width:100px" >OrderID</th>
+                          <th scope="col"  style="width:100px" >ItemName</th>
+                          <th scope="col" style="width:100px" >Quantity</th>
+                          <th scope="col" style="width:50px" >PricePerItem</th>
+                          <th scope="col"style="width:100px" >TotalPrice</th>
+                          <th scope="col" style="width:350px"></th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      @for (int i = 0; i < Model.Count; i++)
+                      {
+                          <tr >
+                              <td><INPUT type="checkbox" class="chk"/></td> 
+                              <td >@Html.DisplayFor(m => Model[i].OrderID, new { @class = "form-control", @id = "orderid1" })</td>
+                              @Html.HiddenFor(m => Model[i].OrderID,new { @id= "orderid" })
+                              <td >@Html.TextBoxFor(m => Model[i].ItemName, new { @class = "form-control ", @id = "itemname" })</td>
+                              <td >@Html.TextBoxFor(m => Model[i].Quantity, new
+                              {
+                                  @class = "form-control ",
+                                  @id = "quantity",
+                                  @onkeypress = "javascript:return isNumber(event)"
+                              })</td>
+                              <td >@Html.TextBoxFor(m => Model[i].PricePerItem, new
+                              {
+                                  @class = "form-control ",
+                                  @id = "price",
+                                  @onkeypress = "javascript:return isNumber(event)"
+                              })</td>
+                              <td>@Html.DisplayFor(m => Model[i].TotalPrice, new { @id = "totalprice" })</td>
+                              @Html.HiddenFor(m => Model[i].TotalPrice, new { @id = "totalprice" })
+                              <td>
+                                  @Html.ActionLink(
+                                    "Delete",
+                                    "Delete",
+                                    "Edit",
+                                    new { passid = @Model[i].OrderID, },
+                                    new { @class = "btn btn-danger mr-1 ",@id="deleteBtn" }
+                                        )
+                                  <button type="submit" name="submit" value="@Model[i].OrderID" class="btn btn-info" 
+                                          id="updateBtn"  onclick="validateForm()">update</button>
+                                  <button type="button" id="@Model[i].OrderID" class="btn btn-danger" value="@Model[i].OrderID" onclick="Delete(@Model[i].OrderID)" >Delete Api</button>
+                                  <button type="button" id="@Model[i].PricePerItem"  class="btn btn-info" value="@Model[i].PricePerItem" 
+                                          onclick="Update(@Model[i].OrderID)">Update Api</button>
+                          </td>
+                      </tr>
+                      }
+                    
+                  </tbody>
+              </table>
+          </div>
+      </div>
+  </div>
+}
+
+
+    @*</div>
+      <div class="row"><button id="btnDelete" class="btn btn-danger mb-2">Delete Api</button> </div>
+  </div>*@
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+
+<script type="text/javascript">
+
+   function validateForm() {
+            alert('Update successfully');
+    };
+    var dBtn = document.getElementById("deleteBtn");
+    dBtn.onclick = function () {
+        alert("delete successfully");
+    }
+    function Fliter() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("dataTable");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+    function isNumber(evt) {
+        var iKeyCode = (evt.which) ? evt.which : evt.keyCode
+        if (iKeyCode != 46 && iKeyCode > 31 && (iKeyCode < 48 || iKeyCode > 57)) {
+            alert("Please enter the valid number");
+            return false;
+        }
+        return true;
+    }
+
+    function Delete(num) {
+        //alert("test");
+        var id = num;
+        //document.getElementById("demo").innerHTML = id;
+        var order = {
+            "OrderID": num,
+            "ItemName": $("#itemname").val(),
+            "PricePerItem": $("#price").val(),
+            "Quantity": $("#quantity").val(),
+            "TotalPrice": $("#totalprice").val()
+        };
+        $.ajax({
+            type: "POST",
+            url: 'http://localhost:55976/api/Test/Delete/{order}',
+            data: JSON.stringify(order),
+            contentType: "application/json;charset=utf-8",
+            processData: true,
+            success: function (data, status, xhr) {
+                alert("Congraduations!, Delete Successfully");
+                location.replace("http://localhost:55976/Edit/Edit");
+            },
+            error: function (xhr) {
+                alert(xhr.responseText);
+            }
+        });
+    };
+    
+
+    function Update(num) {
+
+        var id = num;
+        $("#dataTable").find('tr').each(function(){
+            if($(this).find('input[type="checkbox"]').is(':checked'))
+            {
+                var currentRow = $(this).closest("tr");
+                var col1 = currentRow.find("td:eq(1)").html();
+                var name = $(this).find('td:eq(2) input[type="text"]').val();
+                var qty = $(this).find('td:eq(3) input[type="text"]').val();
+                var price = $(this).find('td:eq(4) input[type="text"]').val();
+                var data = id + "\n" + name + "\n" + qty 
+                alert(data);
+                var changed = {
+
+                    "OrderID": num,
+                    "ItemName": $(this).find('td:eq(2) input[type="text"]').val(),
+                    "PricePerItem":$(this).find('td:eq(4) input[type="text"]').val(),
+                    "Quantity": $(this).find('td:eq(3) input[type="text"]').val(),
+                    "TotalPrice": $("#totalprice").val()
+                };
+                $.ajax({
+                    type: "POST",
+                    url: 'http://localhost:55976/api/Test/update/{changed}',
+                    data: JSON.stringify(changed),
+                    contentType: "application/json;charset=utf-8",
+                    processData: true,
+                    success: function (data, status, xhr) {
+                        alert("Congraduations!, Update Successfully");
+                        location.replace("http://localhost:55976/Edit/Edit");
+                    },
+                    error: function (xhr) {
+                        alert(xhr.responseText);
+                    }
+                });
+            }
+        }
+
+        
+        )}
+</script>
